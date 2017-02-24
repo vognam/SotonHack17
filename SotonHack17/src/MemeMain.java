@@ -10,9 +10,12 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
+import org.json.*;
+
+// most of this you don't need to know how it works
+// not even i know how it works; just read the parts i've commented
 public class MemeMain {
-    public static void main(String[] args) 
-    {
+    public void processAPI() {
         HttpClient httpclient = HttpClients.createDefault();
 
         try
@@ -23,10 +26,13 @@ public class MemeMain {
             URI uri = builder.build();
             HttpPost request = new HttpPost(uri);
             request.setHeader("Content-Type", "application/json");
+            //subscription key gets put in here. get it from the api emotion website
             request.setHeader("Ocp-Apim-Subscription-Key", "943d220c06d844848f0a1987962cc610");
 
 
             // Request body
+            //either enter a url in the format "{'url':'httpblablabal'}"
+            //OR binary image data (i think)
             StringEntity reqEntity = new StringEntity("{'url' : 'http://orig15.deviantart.net/5470/f/2010/105/4/5/random_person_by_vurtov.jpg'}");
             request.setEntity(reqEntity);
 
@@ -35,12 +41,32 @@ public class MemeMain {
 
             if (entity != null) 
             {
-                System.out.println(EntityUtils.toString(entity));
+                //the json parsing is sent over to a separate method
+            	processEmotion(entity);
             }
         }
         catch (Exception e)
         {
             System.out.println(e.getMessage());
         }
+    }
+    
+    //parses the JSON data and creates an array of floats for each emotion
+    //it's organized in alphabetical order so emotions[0] will contain the float for anger
+    public void processEmotion(HttpEntity entity) throws Exception{
+    	//System.out.println(EntityUtils.toString(entity));
+    	float[] emotions = new float[8];
+    	String temp = EntityUtils.toString(entity);
+    	JSONArray jsonArray = new JSONArray(temp);
+    	JSONObject scores = jsonArray.getJSONObject(0).getJSONObject("scores"); 
+    	emotions[0] = Float.parseFloat(scores.get("anger").toString());
+    	emotions[1] = Float.parseFloat(scores.get("contempt").toString());
+    	emotions[2] = Float.parseFloat(scores.get("disgust").toString());
+    	emotions[3] = Float.parseFloat(scores.get("fear").toString());
+    	emotions[4] = Float.parseFloat(scores.get("happiness").toString());
+    	emotions[5] = Float.parseFloat(scores.get("neutral").toString());
+    	emotions[6] = Float.parseFloat(scores.get("sadness").toString());
+    	emotions[7] = Float.parseFloat(scores.get("surprise").toString());
+    	
     }
 }
