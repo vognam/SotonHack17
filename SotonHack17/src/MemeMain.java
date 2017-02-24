@@ -67,6 +67,6 @@ public class MemeMain {
     	emotions[5] = Float.parseFloat(scores.get("neutral").toString());
     	emotions[6] = Float.parseFloat(scores.get("sadness").toString());
     	emotions[7] = Float.parseFloat(scores.get("surprise").toString());
-    	
+    	System.out.println(emotions[0]);
     }
 }
