@@ -111,7 +111,7 @@ public class ImageTools {
 		FontMetrics fontMatric = g.getFontMetrics(currentFont);
 		while (fontMatric.stringWidth(upperCaption) > width) {
 			fontSize--;
-			System.out.println(fontSize);
+			//System.out.println(fontSize);
 			currentFont = new Font("Impact", Font.PLAIN, fontSize);
 			fontMatric = g.getFontMetrics(currentFont);
 		}
