@@ -10,7 +10,6 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
-
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -42,6 +41,10 @@ public class MemeGUI {
 
 class MemeFrame extends JFrame {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private BufferedImage img;
 	private Container container;
 	private WebcamPanel camPanel;
@@ -128,6 +131,10 @@ class MemeFrame extends JFrame {
 
 class ImagePanel extends JPanel {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private BufferedImage img;
 	
 	public ImagePanel(BufferedImage img) {

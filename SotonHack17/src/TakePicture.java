@@ -1,12 +1,14 @@
 import java.io.IOException;
 
-import javax.swing.JPanel;
-
 import com.github.sarxos.webcam.Webcam;
 import com.github.sarxos.webcam.WebcamPanel;
-import com.github.sarxos.webcam.WebcamResolution;
 
 public class TakePicture extends WebcamPanel{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	public TakePicture(Webcam webcam) {
 		super(webcam);
