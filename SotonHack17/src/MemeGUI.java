@@ -1,20 +1,17 @@
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
-import java.awt.FlowLayout;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.geom.AffineTransform;
-import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 
-import javax.imageio.ImageIO;
-import javax.swing.BoxLayout;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -56,7 +53,7 @@ class MemeFrame extends JFrame {
 		
 		init();
 		
-		this.setSize(500, 600);
+		this.setSize(1600, 1000);
 		this.setVisible(true);
 	}
 	
@@ -82,9 +79,14 @@ class MemeFrame extends JFrame {
 		JSplitPane displayPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, camPanel, memePanel);
 		//displayPanel.setOneTouchExpandable(true);
 		displayPanel.setResizeWeight(0.5);
-				
-		JButton picButton = new JButton("Take Picture!");
-				
+		
+		Icon buttonIcon = new ImageIcon("pepe.jpg");
+		
+		JButton picButton = new JButton(buttonIcon);
+		picButton.setPreferredSize( new Dimension((int) picButton.getPreferredSize().getWidth(), 175));
+		picButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		picButton.setFont(new Font("Comic Sans MS", Font.PLAIN, 40));
+		
 		picButton.addActionListener(new ActionListener() {
 			
 			@Override
