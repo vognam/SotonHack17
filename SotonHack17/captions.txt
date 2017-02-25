@@ -1,3 +1,6 @@
 0.038738605 0.002957059 0.009361511 0.0 1.0 0.84 0.1 0.0 , This caption is great +  Bottom
 0.038738605 0.002957059 0.009361511 0.0 0.8 0.84 0.1 0.0 , This caption is marvelous +  Bottom cool.. sw
 0.038738605 0.002957059 0.009361511 0.0 0.5 0.84 0.1 0.0 , This caption is fine +  BottomBottom Bottom
+0.038738605 0.002957059 0.009361511 0.0 0.5 0.84 0.1 0.0 , This caption is fine1 +  BottomBottom Bottom
+0.038738605 0.002957059 0.009361511 0.0 0.5 0.84 0.1 0.0 , This caption is fine2 +  BottomBottom Bottom
+0.038738605 0.002957059 0.009361511 0.0 0.5 0.84 0.1 0.0 , This caption is fine3 +  BottomBottom Bottom

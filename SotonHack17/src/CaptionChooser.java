@@ -2,6 +2,7 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Random;
 
 public class CaptionChooser {
 
@@ -86,6 +87,8 @@ public class CaptionChooser {
 			if(localDifference < difference){
 				caption = localCaption.clone();
 				difference = localDifference;
+			} else if (localDifference == difference && (new Random()).nextBoolean()){
+				caption = localCaption.clone();
 			}
 		}
 		
