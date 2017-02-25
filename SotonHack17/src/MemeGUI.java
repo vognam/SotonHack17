@@ -18,6 +18,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JSplitPane;
 
 import com.github.sarxos.webcam.Webcam;
 import com.github.sarxos.webcam.WebcamPanel;
@@ -65,7 +66,7 @@ class MemeFrame extends JFrame {
 		container.setLayout(new BorderLayout());
 		
 		// displayPanel
-		JPanel displayPanel = new JPanel(new GridLayout(1, 2));
+		//JPanel displayPanel = new JPanel(new GridLayout(1, 2));
 		
 		// webcam
 		Webcam webcam = Webcam.getDefault();
@@ -75,8 +76,12 @@ class MemeFrame extends JFrame {
 		
 		ImagePanel memePanel = new ImagePanel(null);
 		
-		displayPanel.add(camPanel);
-		displayPanel.add(memePanel);
+		//displayPanel.add(camPanel);
+		//displayPanel.add(memePanel);
+		
+		JSplitPane displayPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, camPanel, memePanel);
+		//displayPanel.setOneTouchExpandable(true);
+		displayPanel.setResizeWeight(0.5);
 				
 		JButton picButton = new JButton("Take Picture!");
 				
