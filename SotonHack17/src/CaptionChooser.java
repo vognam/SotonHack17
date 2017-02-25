@@ -19,7 +19,7 @@ public class CaptionChooser {
 			myEmotions = newEmotions;
 			String line;
 			try {
-				in = new BufferedReader(new FileReader("captions.txt"));
+				in = new BufferedReader(new FileReader("captions_combined.txt"));
 				try {
 					while((line = in.readLine()) != null)
 					{
@@ -82,7 +82,7 @@ public class CaptionChooser {
 			float localDifference = 0.0f;
 			for(int i = 0; i < myEmotions.length; i++){
 				//System.out.println(myEmotions[i]);
-				localDifference += Math.abs(myEmotions[i] - localEmotions[i]);
+				localDifference += Math.sqrt(Math.abs(myEmotions[i] - localEmotions[i]));
 			}
 			if(localDifference < difference){
 				caption = localCaption.clone();
