@@ -5,10 +5,9 @@ import java.io.IOException;
 
 public class CaptionChooser {
 
-		private MyImage myImage;
 		private BufferedReader in;
-		private float difference;
-		String[] caption = {"", ""};
+		private float difference = Float.POSITIVE_INFINITY;
+		String[] caption;
 		private float[] myEmotions;
 		
 		/*
@@ -23,7 +22,7 @@ public class CaptionChooser {
 				try {
 					while((line = in.readLine()) != null)
 					{
-					    AnalyseData(line);
+					    ParseText(line);
 					}
 					in.close();
 				} catch (IOException e) {
@@ -38,38 +37,56 @@ public class CaptionChooser {
 			return caption;
 		}
 		
-		void AnalyseData(String line){
+		void ParseText(String line){
+			String[] localCaption = {"", ""};
 			float[] emotions = new float[20];
 			int emotionIndex = 0;
-			int captionIndex = 0;
-			int i = 0;
 			boolean nextIsCaption = false;
-			while(i < line.length()){
+			for(int i = 0; i < line.length(); i++){
 				String newEmotionValue = "";
-				String captionPart = "";
-				if (line.substring(i, i+1) == "+"){
+				//String captionPart = "";
+				
+				if (line.substring(i, i+1).equals(",")){
 					nextIsCaption = true;
+					i++;
+					for( ; !line.substring(i+2, i+3).equals("+"); i++){
+						localCaption[0] += line.substring(i+1, i+2);
+					}
+					i+=2;
+					for( ; i + 3 < line.length(); i++){
+						localCaption[1] += line.substring(i+3, i+4);
+					}
 				}
-				while(line.substring(i, i+1) != " " && !nextIsCaption){
+				
+				while(!line.substring(i, i+1).equals(" ") && nextIsCaption == false){
 					newEmotionValue += line.substring(i, i+1);
 					i++;
 				}
-				while(line.substring(i, i+1) != " " && nextIsCaption){
-					captionPart += line.substring(i, i+1);
-					i++;
+				
+				if(nextIsCaption == false){
+					emotions[emotionIndex] = Float.parseFloat(newEmotionValue);
+					emotionIndex++;
 				}
-				if(nextIsCaption){
-					caption[captionIndex] = captionPart;
-					captionIndex++;
-				}
-				emotions[emotionIndex] = Float.parseFloat(newEmotionValue);
-				emotionIndex++;
-				i++;
+				
+				//System.out.println("ok" + i + line.substring(i, i+1));
+				//System.out.println(i  + " / " + line.length() + " nex:" + nextIsCaption);
+					
 			}
-			for(int j = 0; emotions[j] != 0; j++){
-				System.out.println(emotions[j]);
-			}
+			
+			AnalyseData(emotions, localCaption);
+			
 		}
 		
+		void AnalyseData(float[] localEmotions, String[] localCaption){
+			float localDifference = 0.0f;
+			for(int i = 0; i < myEmotions.length; i++){
+				//System.out.println(myEmotions[i]);
+				localDifference += Math.abs(myEmotions[i] - localEmotions[i]);
+			}
+			if(localDifference < difference){
+				caption = localCaption.clone();
+				difference = localDifference;
+			}
+		}
 		
 }

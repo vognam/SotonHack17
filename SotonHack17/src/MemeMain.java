@@ -15,6 +15,9 @@ import org.json.*;
 // most of this you don't need to know how it works
 // not even i know how it works; just read the parts i've commented
 public class MemeMain {
+	
+	public String[] caption = new String[2];
+	
     public void processAPI() {
         HttpClient httpclient = HttpClients.createDefault();
 
@@ -67,6 +70,11 @@ public class MemeMain {
     	emotions[5] = Float.parseFloat(scores.get("neutral").toString());
     	emotions[6] = Float.parseFloat(scores.get("sadness").toString());
     	emotions[7] = Float.parseFloat(scores.get("surprise").toString());
-    	System.out.println(emotions[0]);
+    	//System.out.println(emotions[0]);
+    	CaptionChooser captionChooser = new CaptionChooser();
+ 
+    	caption = captionChooser.ChooseCaption(emotions);
+    	System.out.println(caption[0]);
+    	System.out.println(caption[1]);
     }
 }
