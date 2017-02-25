@@ -3,10 +3,13 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
+
+import org.apache.http.entity.ByteArrayEntity;
 
 /**
  * 
@@ -54,6 +57,39 @@ public class ImageTools {
 	/**
 	 * 
 	 * @param img
+	 * @return
+	 * 
+	 * To send this with http request:
+	 *     setHeader("Content-Type", "application/octet-stream");
+	 *     request.setEntity(ByteArrayEntity);
+	 */
+	public static ByteArrayEntity getBinary(BufferedImage img) {
+		ByteArrayOutputStream stream = new ByteArrayOutputStream();
+		try {
+			ImageIO.write(img, "jpg", stream);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try {
+			stream.flush();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		byte[] imageByte = stream.toByteArray();
+		try {
+			stream.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return new ByteArrayEntity(imageByte);
+	}
+	
+	/**
+	 * 
+	 * @param img
 	 * @param caption
 	 * @return
 	 */
@@ -61,7 +97,7 @@ public class ImageTools {
 		Graphics g = img.getGraphics();
 		int width = img.getWidth();
 		int height = img.getHeight();
-		
+		// TODO
 		g.setColor(Color.WHITE);
 		g.setFont(new Font("Impact", Font.PLAIN, 30));
 		g.drawString(upperCaption, 10, 10);
