@@ -107,18 +107,12 @@ public class ImageTools {
 		int width = img.getWidth() - margin * 2;
 		int height = img.getHeight();
 
-		int fontSize = 100; // default font size
+		int fontSize = 30; // min font size
 		int offset = 2;
+		Font currentFont = new Font("Impact", Font.PLAIN, fontSize);
+		FontMetrics fontMatric = g.getFontMetrics(currentFont);
 		// draw top caption
 		if (topCaption != null) {
-			Font currentFont = new Font("Impact", Font.PLAIN, fontSize);
-			FontMetrics fontMatric = g.getFontMetrics(currentFont);
-			while (fontMatric.stringWidth(topCaption) > width && fontSize > 30) {
-				fontSize--;
-				currentFont = new Font("Impact", Font.PLAIN, fontSize);
-				fontMatric = g.getFontMetrics(currentFont);
-			}
-
 			// cut caption into lines if it is really long
 			ArrayList<String> topLines = new ArrayList<String>();
 			String stringLeft = topCaption; // string has not into lines yet
@@ -127,13 +121,18 @@ public class ImageTools {
 				// This part seems working magically
 				while (fontMatric.stringWidth(stringLeft.substring(0, endIndex)) > width
 						|| !stringLeft.substring(endIndex - 1, endIndex).equals(" ")
-								&& !stringLeft.substring(endIndex, endIndex + 1).equals(" ")) {
+						&& !stringLeft.substring(endIndex, endIndex + 1).equals(" ")) {
 					endIndex--;
 				}
 				topLines.add(stringLeft.substring(0, endIndex));
 				stringLeft = stringLeft.substring(endIndex);
 			}
 			topLines.add(stringLeft);
+			
+			fontSize = findFontSize(topLines, 30, g, width);
+			
+			currentFont = new Font("Impact", Font.PLAIN, fontSize);
+			fontMatric = g.getFontMetrics(currentFont);
 
 			// set lineWidth to the width of the line with the max width
 			int lineWidth = 0;
@@ -165,15 +164,7 @@ public class ImageTools {
 		}
 
 		// draw bottom caption
-		if (bottomCaption != null && false) {
-			fontSize = 100;
-			Font currentFont = new Font("Impact", Font.PLAIN, fontSize);
-			FontMetrics fontMatric = g.getFontMetrics(currentFont);
-			while (fontMatric.stringWidth(bottomCaption) > width && fontSize > 30) {
-				fontSize--;
-				currentFont = new Font("Impact", Font.PLAIN, fontSize);
-				fontMatric = g.getFontMetrics(currentFont);
-			}
+		if (bottomCaption != null) {
 			
 			// cut caption into lines if it is really long
 			ArrayList<String> bottomLines = new ArrayList<String>();
@@ -190,6 +181,11 @@ public class ImageTools {
 				stringLeft = stringLeft.substring(endIndex);
 			}
 			bottomLines.add(stringLeft);
+			
+			fontSize = findFontSize(bottomLines, 30, g, width);
+			
+			currentFont = new Font("Impact", Font.PLAIN, fontSize);
+			fontMatric = g.getFontMetrics(currentFont);
 
 			// set lineWidth to the width of the line with the max width
 			int lineWidth = 0;
@@ -221,6 +217,28 @@ public class ImageTools {
 		}
 
 		return img;
+	}
+	
+	/**
+	 * 
+	 * @param lines
+	 * @param fontSize base FontSize (min fontSize)
+	 * @param g
+	 * @param width
+	 * @return
+	 */
+	private static int findFontSize(ArrayList<String> lines, int fontSize, Graphics g, int width) {
+		while (true && fontSize < 100) {
+			Font currentFont = new Font("Impact", Font.PLAIN, fontSize);
+			FontMetrics fontMatric = g.getFontMetrics(currentFont);
+			for (String line : lines) {
+				if (fontMatric.stringWidth(line) > width) {
+					return fontSize - 1;
+				}
+			}
+			fontSize++;
+		}
+		return fontSize;
 	}
 
 	public static void main(String[] args) {
