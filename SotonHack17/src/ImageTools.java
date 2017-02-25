@@ -165,7 +165,7 @@ public class ImageTools {
 		}
 
 		// draw bottom caption
-		if (bottomCaption != null) {
+		if (bottomCaption != null && false) {
 			fontSize = 100;
 			Font currentFont = new Font("Impact", Font.PLAIN, fontSize);
 			FontMetrics fontMatric = g.getFontMetrics(currentFont);
