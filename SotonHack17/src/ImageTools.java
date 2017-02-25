@@ -96,46 +96,81 @@ public class ImageTools {
 	 * @param caption
 	 * @return
 	 */
-	public static BufferedImage drawCaption(BufferedImage img, String upperCaption, String lowerCaption) {
+	public static BufferedImage drawCaption(BufferedImage img, String topCaption, String bottomCaption) {
 		Graphics2D g = (Graphics2D)img.getGraphics();
 		// make it smoother
 		g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
 		        RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
 		
-		int width = img.getWidth();
+		int margin = 10;
+		
+		int width = img.getWidth() - margin * 2;
 		int height = img.getHeight();
 		
 		// draw top caption
 		int fontSize = 100;
 		Font currentFont = new Font("Impact", Font.PLAIN, fontSize);
 		FontMetrics fontMatric = g.getFontMetrics(currentFont);
-		while (fontMatric.stringWidth(upperCaption) > width) {
+		while (fontMatric.stringWidth(topCaption) > width && fontSize > 30) {
 			fontSize--;
-			System.out.println(fontSize);
 			currentFont = new Font("Impact", Font.PLAIN, fontSize);
 			fontMatric = g.getFontMetrics(currentFont);
 		}
+		g.setFont(currentFont);
 		
-		int topX = (width - fontMatric.stringWidth(upperCaption)) / 2;
+		int topX = (width - fontMatric.stringWidth(topCaption)) / 2 + margin;
 		int topY = fontMatric.getHeight() - fontMatric.getDescent();
 		
-		g.setFont(currentFont);
-		g.setColor(Color.WHITE);
+		// draw offsets
+		int offset = 2;
+		g.setColor(Color.BLACK);
+		g.drawString(topCaption, topX - offset, topY - offset);
+		g.drawString(topCaption, topX - offset, topY + offset);
+		g.drawString(topCaption, topX + offset, topY - offset);
+		g.drawString(topCaption, topX + offset, topY + offset);
 		
-		g.drawString(upperCaption, topX, topY);
+		// draw text
+		g.setColor(Color.WHITE);
+		g.drawString(topCaption, topX, topY);
+		
+		// draw bottom caption
+		fontSize = 100;
+		currentFont = new Font("Impact", Font.PLAIN, fontSize);
+		fontMatric = g.getFontMetrics(currentFont);
+		while (fontMatric.stringWidth(bottomCaption) > width && fontSize > 30) {
+			fontSize--;
+			currentFont = new Font("Impact", Font.PLAIN, fontSize);
+			fontMatric = g.getFontMetrics(currentFont);
+		}
+		g.setFont(currentFont);
+
+		int bottomX = (width - fontMatric.stringWidth(bottomCaption)) / 2 + margin;
+		int bottomY = height - fontMatric.getDescent();
+
+		// draw offsets
+		g.setColor(Color.BLACK);
+		g.drawString(bottomCaption, bottomX - offset, bottomY - offset);
+		g.drawString(bottomCaption, bottomX - offset, bottomY + offset);
+		g.drawString(bottomCaption, bottomX + offset, bottomY - offset);
+		g.drawString(bottomCaption, bottomX + offset, bottomY + offset);
+
+		// draw text
+		g.setColor(Color.WHITE);
+		g.drawString(bottomCaption, bottomX, bottomY);
+		
 		return img;
 	}
 	
 	public static void main(String[] args) {
 		BufferedImage img = null;
 		try {
-			img = ImageIO.read(new File("/Users/Allen/Documents/SotonHack17 Test/2.jpg"));
+			img = ImageIO.read(new File("/Users/Allen/Documents/SotonHack17 Test/3.jpg"));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		img = resizeImage(img);
-		img = drawCaption(img, "testhahahahhahahahahahahah?", "test");
+		img = drawCaption(img, "TEST ON A WHITE BACKGROUND. HOWEVER THIS LINE IS SO LONG!", "THIS IS ALSO A TEST. HOWEVER THIS LINE IS ALSO LONG XD.");
 		try {
 			ImageIO.write(img, "jpg", new File("/Users/Allen/Documents/SotonHack17 Test/output.jpg"));
 		} catch (IOException e) {

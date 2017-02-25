@@ -85,6 +85,7 @@ class MemeFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				picButton.setEnabled(false);
+				
 				img = webcam.getImage();
 				//passes the image to the meme processor
 				MemeMain memeMain = new MemeMain();
@@ -92,10 +93,13 @@ class MemeFrame extends JFrame {
 				upperText = memeMain.getUpperText();
 				lowerText = memeMain.getLowerText();
 				img = ImageTools.drawCaption(img, upperText, lowerText);
+				
 				memePanel.setImage(img);
 				memePanel.repaint();
+				
 				picButton.setEnabled(true);
 			}
+			
 		});
 		
 		container.add(picButton, BorderLayout.SOUTH);
