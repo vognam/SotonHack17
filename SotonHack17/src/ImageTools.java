@@ -9,6 +9,8 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import javax.imageio.ImageIO;
 
@@ -23,7 +25,7 @@ import org.apache.http.entity.ByteArrayEntity;
  *
  */
 public class ImageTools {
-	
+
 	/**
 	 * Resize image if image is too big
 	 * 
@@ -33,16 +35,16 @@ public class ImageTools {
 	public static BufferedImage resizeImage(BufferedImage img) {
 		int width = img.getWidth();
 		int height = img.getHeight();
-		
+
 		int max = 1000; // max width or height
-		
+
 		if (width <= max && height <= max) { // if image is not too big
 			return img;
 		}
-		
+
 		int scaledWidth;
 		int scaledHeight;
-		
+
 		if (width <= height) {
 			scaledWidth = width * max / height;
 			scaledHeight = 1000;
@@ -56,15 +58,14 @@ public class ImageTools {
 		g.drawImage(tmp, 0, 0, null);
 		return img;
 	}
-	
+
 	/**
 	 * 
 	 * @param img
 	 * @return
 	 * 
-	 * To send this with http request:
-	 *     setHeader("Content-Type", "application/octet-stream");
-	 *     request.setEntity(ByteArrayEntity);
+	 * 		To send this with http request: setHeader("Content-Type",
+	 *         "application/octet-stream"); request.setEntity(ByteArrayEntity);
 	 */
 	public static ByteArrayEntity getBinary(BufferedImage img) {
 		ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -89,53 +90,169 @@ public class ImageTools {
 		}
 		return new ByteArrayEntity(imageByte);
 	}
-	
+
 	/**
 	 * 
 	 * @param img
 	 * @param caption
 	 * @return
 	 */
-	public static BufferedImage drawCaption(BufferedImage img, String upperCaption, String lowerCaption) {
-		Graphics2D g = (Graphics2D)img.getGraphics();
+	public static BufferedImage drawCaption(BufferedImage img, String topCaption, String bottomCaption) {
+		Graphics2D g = (Graphics2D) img.getGraphics();
 		// make it smoother
-		g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-		        RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
-		
-		int width = img.getWidth();
+		g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
+
+		int margin = 10;
+
+		int width = img.getWidth() - margin * 2;
 		int height = img.getHeight();
-		
-		// draw top caption
-		int fontSize = 100;
+
+		int fontSize = 30; // min font size
+		int offset = 2;
 		Font currentFont = new Font("Impact", Font.PLAIN, fontSize);
 		FontMetrics fontMatric = g.getFontMetrics(currentFont);
-		while (fontMatric.stringWidth(upperCaption) > width) {
-			fontSize--;
-			//System.out.println(fontSize);
+		// draw top caption
+		if (topCaption != null) {
+			// cut caption into lines if it is really long
+			ArrayList<String> topLines = new ArrayList<String>();
+			String stringLeft = topCaption; // string has not into lines yet
+			while (fontMatric.stringWidth(stringLeft) > width) {
+				int endIndex = stringLeft.length();
+				// This part seems working magically
+				while (fontMatric.stringWidth(stringLeft.substring(0, endIndex)) > width
+						|| !stringLeft.substring(endIndex - 1, endIndex).equals(" ")
+						&& !stringLeft.substring(endIndex, endIndex + 1).equals(" ")) {
+					endIndex--;
+				}
+				topLines.add(stringLeft.substring(0, endIndex));
+				stringLeft = stringLeft.substring(endIndex);
+			}
+			topLines.add(stringLeft);
+			
+			fontSize = findFontSize(topLines, 30, g, width);
+			
 			currentFont = new Font("Impact", Font.PLAIN, fontSize);
 			fontMatric = g.getFontMetrics(currentFont);
+
+			// set lineWidth to the width of the line with the max width
+			int lineWidth = 0;
+			for (int i = 0; i < topLines.size(); i++) {
+				int stringWidth = fontMatric.stringWidth(topLines.get(i));
+				if (stringWidth > lineWidth) {
+					lineWidth = stringWidth;
+				}
+			}
+
+			// draw
+			g.setFont(currentFont);
+			int topX = (width - lineWidth) / 2 + margin;
+			for (int i = 0; i < topLines.size(); i++) {
+				String line = topLines.get(i);
+				int topY = fontMatric.getHeight() * (i + 1) - fontMatric.getDescent();
+
+				// draw offsets
+				g.setColor(Color.BLACK);
+				g.drawString(line, topX - offset, topY - offset);
+				g.drawString(line, topX - offset, topY + offset);
+				g.drawString(line, topX + offset, topY - offset);
+				g.drawString(line, topX + offset, topY + offset);
+
+				// draw text
+				g.setColor(Color.WHITE);
+				g.drawString(line, topX, topY);
+			}
 		}
-		
-		int topX = (width - fontMatric.stringWidth(upperCaption)) / 2;
-		int topY = fontMatric.getHeight() - fontMatric.getDescent();
-		
-		g.setFont(currentFont);
-		g.setColor(Color.WHITE);
-		
-		g.drawString(upperCaption, topX, topY);
+
+		// draw bottom caption
+		if (bottomCaption != null) {
+			
+			// cut caption into lines if it is really long
+			ArrayList<String> bottomLines = new ArrayList<String>();
+			String stringLeft = bottomCaption; // string has not into lines yet
+			while (fontMatric.stringWidth(stringLeft) > width) {
+				int endIndex = stringLeft.length();
+				// This part seems working magically
+				while (fontMatric.stringWidth(stringLeft.substring(0, endIndex)) > width
+						|| !stringLeft.substring(endIndex - 1, endIndex).equals(" ")
+								&& !stringLeft.substring(endIndex, endIndex + 1).equals(" ")) {
+					endIndex--;
+				}
+				bottomLines.add(stringLeft.substring(0, endIndex));
+				stringLeft = stringLeft.substring(endIndex);
+			}
+			bottomLines.add(stringLeft);
+			
+			fontSize = findFontSize(bottomLines, 30, g, width);
+			
+			currentFont = new Font("Impact", Font.PLAIN, fontSize);
+			fontMatric = g.getFontMetrics(currentFont);
+
+			// set lineWidth to the width of the line with the max width
+			int lineWidth = 0;
+			for (int i = 0; i < bottomLines.size(); i++) {
+				int stringWidth = fontMatric.stringWidth(bottomLines.get(i));
+				if (stringWidth > lineWidth) {
+					lineWidth = stringWidth;
+				}
+			}
+
+			// draw
+			g.setFont(currentFont);
+			int topX = (width - lineWidth) / 2 + margin;
+			for (int i = 0; i < bottomLines.size(); i++) {
+				String line = bottomLines.get(i);
+				int topY = height - fontMatric.getHeight() * i - fontMatric.getDescent();
+
+				// draw offsets
+				g.setColor(Color.BLACK);
+				g.drawString(line, topX - offset, topY - offset);
+				g.drawString(line, topX - offset, topY + offset);
+				g.drawString(line, topX + offset, topY - offset);
+				g.drawString(line, topX + offset, topY + offset);
+
+				// draw text
+				g.setColor(Color.WHITE);
+				g.drawString(line, topX, topY);
+			}
+		}
+
 		return img;
 	}
 	
+	/**
+	 * 
+	 * @param lines
+	 * @param fontSize base FontSize (min fontSize)
+	 * @param g
+	 * @param width
+	 * @return
+	 */
+	private static int findFontSize(ArrayList<String> lines, int fontSize, Graphics g, int width) {
+		while (true && fontSize < 100) {
+			Font currentFont = new Font("Impact", Font.PLAIN, fontSize);
+			FontMetrics fontMatric = g.getFontMetrics(currentFont);
+			for (String line : lines) {
+				if (fontMatric.stringWidth(line) > width) {
+					return fontSize - 1;
+				}
+			}
+			fontSize++;
+		}
+		return fontSize;
+	}
+
 	public static void main(String[] args) {
 		BufferedImage img = null;
 		try {
-			img = ImageIO.read(new File("/Users/Allen/Documents/SotonHack17 Test/2.jpg"));
+			img = ImageIO.read(new File("/Users/Allen/Documents/SotonHack17 Test/3.jpg"));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		img = resizeImage(img);
-		img = drawCaption(img, "testhahahahhahahahahahahah?", "test");
+		img = drawCaption(img,
+				"TEST ON A WHITE BACKGROUND. HOWEVER THIS LINE IS SO LONG! WHAT IF I WILL MAKE IT REALLY REALLY LONG?",
+				"THIS IS ALSO A TEST. HOWEVER THIS LINE IS ALSO LONG XDXDXDXDXDXDXDXDXXDXDDXDXDXD.");
 		try {
 			ImageIO.write(img, "jpg", new File("/Users/Allen/Documents/SotonHack17 Test/output.jpg"));
 		} catch (IOException e) {
