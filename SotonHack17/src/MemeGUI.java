@@ -1,7 +1,10 @@
 import java.awt.BorderLayout;
 import java.awt.Container;
+import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
@@ -12,6 +15,10 @@ import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+
+import com.github.sarxos.webcam.Webcam;
+import com.github.sarxos.webcam.WebcamPanel;
+import com.github.sarxos.webcam.WebcamResolution;
 
 public class MemeGUI {
 	
@@ -28,43 +35,62 @@ public class MemeGUI {
 class MemeFrame extends JFrame {
 	
 	private BufferedImage img;
+	private Container container;
+	private WebcamPanel camPanel;
 	
 	public MemeFrame() {
 		
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-		Container container = this.getContentPane();
-		container.setLayout(new BorderLayout());
-		
-		ImagePanel canvas = new ImagePanel();
-				
-		JButton chooseButton = new JButton("Choose Image");
-		
-		container.add(chooseButton, BorderLayout.SOUTH);
-		container.add(canvas, BorderLayout.CENTER);
+		init();
 		
 		this.setSize(500, 600);
 		this.setVisible(true);
+	}
+	
+	private void init() {
+		container = this.getContentPane();
+		container.setLayout(new BorderLayout());
+				
+		Webcam webcam = Webcam.getDefault();
+		webcam.setViewSize(WebcamResolution.VGA.getSize());
+		camPanel = new TakePicture(webcam);
+				
+		JButton picButton = new JButton("Take Picture!");
+				
+		picButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				picButton.setEnabled(false);
+				img = webcam.getImage();
+				webcam.close();
+				img = ImageTools.drawCaption(img, "Test???", "?");
+				showMeme();
+			}
+		});
+		
+		container.add(picButton, BorderLayout.SOUTH);
+		container.add(camPanel, BorderLayout.CENTER);
+	}
+	
+	private void showMeme() {
+		container.remove(camPanel);
+		container.revalidate();
+		ImagePanel imgPanel = new ImagePanel(img);
+		container.add(imgPanel, BorderLayout.CENTER);
+		container.repaint();
 	}
 	
 }
 
 class ImagePanel extends JPanel {
 	
-	BufferedImage img;
+	private BufferedImage img;
 	
-	public ImagePanel() {
+	public ImagePanel(BufferedImage img) {
 		super();
-		
-		try {
-			img = ImageIO.read(new File("/Users/Allen/Documents/SotonHack17 Test/1.jpg"));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		System.out.println("con");
-		
+		this.img = img;
 	}
 	
 	@Override
@@ -95,6 +121,7 @@ class ImagePanel extends JPanel {
 		int y = (panelHeight - scaledHeight) / 2;
 		
 		g.drawImage(scaledImg, x, y, null);
+		System.out.println("hi");
 	}
 	
 }

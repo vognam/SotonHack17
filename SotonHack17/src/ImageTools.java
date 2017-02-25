@@ -100,7 +100,7 @@ public class ImageTools {
 		// TODO
 		g.setColor(Color.WHITE);
 		g.setFont(new Font("Impact", Font.PLAIN, 30));
-		g.drawString(upperCaption, 10, 10);
+		g.drawString(upperCaption, 10, 100);
 		return img;
 	}
 	
