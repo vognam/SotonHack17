@@ -6,6 +6,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
@@ -18,7 +19,7 @@ public class MemeMain {
 	
 	public String[] caption = new String[2];
 	
-    public void processAPI() {
+    public void processAPI(ByteArrayEntity pic) {
         HttpClient httpclient = HttpClients.createDefault();
 
         try
@@ -28,7 +29,7 @@ public class MemeMain {
 
             URI uri = builder.build();
             HttpPost request = new HttpPost(uri);
-            request.setHeader("Content-Type", "application/json");
+            request.setHeader("Content-Type", "application/octet-stream");
             //subscription key gets put in here. get it from the api emotion website
             request.setHeader("Ocp-Apim-Subscription-Key", "943d220c06d844848f0a1987962cc610");
 
@@ -36,8 +37,8 @@ public class MemeMain {
             // Request body
             //either enter a url in the format "{'url':'httpblablabal'}"
             //OR binary image data (i think)
-            StringEntity reqEntity = new StringEntity("{'url' : 'http://orig15.deviantart.net/5470/f/2010/105/4/5/random_person_by_vurtov.jpg'}");
-            request.setEntity(reqEntity);
+            //StringEntity reqEntity = new StringEntity("{'url' : 'http://orig15.deviantart.net/5470/f/2010/105/4/5/random_person_by_vurtov.jpg'}");
+            request.setEntity(pic);
 
             HttpResponse response = httpclient.execute(request);
             HttpEntity entity = response.getEntity();
@@ -76,5 +77,13 @@ public class MemeMain {
     	caption = captionChooser.ChooseCaption(emotions);
     	System.out.println(caption[0]);
     	System.out.println(caption[1]);
+    }
+    
+    public String getUpperText(){
+    	return caption[0];
+    }
+    
+    public String getLowerText(){
+    	return caption[1];
     }
 }

@@ -46,6 +46,8 @@ class MemeFrame extends JFrame {
 	private BufferedImage img;
 	private Container container;
 	private WebcamPanel camPanel;
+	private String upperText;
+	private String lowerText;
 	
 	public MemeFrame() {
 		
@@ -84,7 +86,12 @@ class MemeFrame extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				picButton.setEnabled(false);
 				img = webcam.getImage();
-				img = ImageTools.drawCaption(img, "Test???", "?");
+				//passes the image to the meme processor
+				MemeMain memeMain = new MemeMain();
+				memeMain.processAPI((ImageTools.getBinary(img)));
+				upperText = memeMain.getUpperText();
+				lowerText = memeMain.getLowerText();
+				img = ImageTools.drawCaption(img, upperText, lowerText);
 				memePanel.setImage(img);
 				memePanel.repaint();
 				picButton.setEnabled(true);
