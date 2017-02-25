@@ -1,7 +1,10 @@
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -94,26 +97,45 @@ public class ImageTools {
 	 * @return
 	 */
 	public static BufferedImage drawCaption(BufferedImage img, String upperCaption, String lowerCaption) {
-		Graphics g = img.getGraphics();
+		Graphics2D g = (Graphics2D)img.getGraphics();
+		// make it smoother
+		g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+		        RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
+		
 		int width = img.getWidth();
 		int height = img.getHeight();
-		// TODO
+		
+		// draw top caption
+		int fontSize = 100;
+		Font currentFont = new Font("Impact", Font.PLAIN, fontSize);
+		FontMetrics fontMatric = g.getFontMetrics(currentFont);
+		while (fontMatric.stringWidth(upperCaption) > width) {
+			fontSize--;
+			System.out.println(fontSize);
+			currentFont = new Font("Impact", Font.PLAIN, fontSize);
+			fontMatric = g.getFontMetrics(currentFont);
+		}
+		
+		int topX = (width - fontMatric.stringWidth(upperCaption)) / 2;
+		int topY = fontMatric.getHeight() - fontMatric.getDescent();
+		
+		g.setFont(currentFont);
 		g.setColor(Color.WHITE);
-		g.setFont(new Font("Impact", Font.PLAIN, 30));
-		g.drawString(upperCaption, 10, 100);
+		
+		g.drawString(upperCaption, topX, topY);
 		return img;
 	}
 	
 	public static void main(String[] args) {
 		BufferedImage img = null;
 		try {
-			img = ImageIO.read(new File("/Users/Allen/Documents/SotonHack17 Test/3.jpg"));
+			img = ImageIO.read(new File("/Users/Allen/Documents/SotonHack17 Test/2.jpg"));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		//img = drawCaption(img, "test?", "test");
 		img = resizeImage(img);
+		img = drawCaption(img, "testhahahahhahahahahahahah?", "test");
 		try {
 			ImageIO.write(img, "jpg", new File("/Users/Allen/Documents/SotonHack17 Test/output.jpg"));
 		} catch (IOException e) {
