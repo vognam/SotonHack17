@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
@@ -46,6 +47,8 @@ class MemeFrame extends JFrame {
 	private WebcamPanel camPanel;
 	private String upperText;
 	private String lowerText;
+	private int windowWidth = 1750;
+	private int windowHeight = 1000;
 	
 	public MemeFrame() {
 		
@@ -53,7 +56,13 @@ class MemeFrame extends JFrame {
 		
 		init();
 		
-		this.setSize(1600, 1000);
+		this.setSize(windowWidth, windowHeight);
+		
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		double width = screenSize.getWidth();
+		double height = screenSize.getHeight();
+		
+		this.setLocation((int)(width - windowWidth) /2, (int)(height - windowHeight) / 2);
 		this.setVisible(true);
 	}
 	
@@ -79,6 +88,8 @@ class MemeFrame extends JFrame {
 		JSplitPane displayPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, camPanel, memePanel);
 		//displayPanel.setOneTouchExpandable(true);
 		displayPanel.setResizeWeight(0.5);
+		displayPanel.setDividerLocation(windowWidth / 2 + displayPanel.getInsets().left);
+		
 		
 		Icon buttonIcon = new ImageIcon("pepe.jpg");
 		
