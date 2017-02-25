@@ -60,21 +60,30 @@ public class MemeMain {
     public void processEmotion(HttpEntity entity) throws Exception{
     	//System.out.println(EntityUtils.toString(entity));
     	float[] emotions = new float[8];
-    	String temp = EntityUtils.toString(entity);
-    	JSONArray jsonArray = new JSONArray(temp);
-    	JSONObject scores = jsonArray.getJSONObject(0).getJSONObject("scores"); 
-    	emotions[0] = Float.parseFloat(scores.get("anger").toString());
-    	emotions[1] = Float.parseFloat(scores.get("contempt").toString());
-    	emotions[2] = Float.parseFloat(scores.get("disgust").toString());
-    	emotions[3] = Float.parseFloat(scores.get("fear").toString());
-    	emotions[4] = Float.parseFloat(scores.get("happiness").toString());
-    	emotions[5] = Float.parseFloat(scores.get("neutral").toString());
-    	emotions[6] = Float.parseFloat(scores.get("sadness").toString());
-    	emotions[7] = Float.parseFloat(scores.get("surprise").toString());
-    	//System.out.println(emotions[0]);
-    	CaptionChooser captionChooser = new CaptionChooser();
- 
-    	caption = captionChooser.ChooseCaption(emotions);
+    	 
+    	try{
+    		String temp = EntityUtils.toString(entity);
+        	JSONArray jsonArray = new JSONArray(temp);
+        	JSONObject scores;
+    		scores = jsonArray.getJSONObject(0).getJSONObject("scores");
+    		emotions[0] = Float.parseFloat(scores.get("anger").toString());
+        	emotions[1] = Float.parseFloat(scores.get("contempt").toString());
+        	emotions[2] = Float.parseFloat(scores.get("disgust").toString());
+        	emotions[3] = Float.parseFloat(scores.get("fear").toString());
+        	emotions[4] = Float.parseFloat(scores.get("happiness").toString());
+        	emotions[5] = Float.parseFloat(scores.get("neutral").toString());
+        	emotions[6] = Float.parseFloat(scores.get("sadness").toString());
+        	emotions[7] = Float.parseFloat(scores.get("surprise").toString());
+
+        	CaptionChooser captionChooser = new CaptionChooser();
+        	caption = captionChooser.ChooseCaption(emotions);
+        	
+    	}catch(Exception e){
+    		caption[0] = "No Face Detected";
+    		caption[1] = "";
+    		return;
+    	}
+    	
     	System.out.println(caption[0]);
     	System.out.println(caption[1]);
     }
