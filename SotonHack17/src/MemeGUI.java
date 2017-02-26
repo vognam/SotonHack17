@@ -14,6 +14,7 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 import java.util.Random;
 
 import javax.imageio.ImageIO;
@@ -21,6 +22,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 
@@ -131,7 +133,10 @@ class MemeFrame extends JFrame {
 				lowerText = memeMain.getLowerText();
 				img = ImageTools.drawCaption(img, upperText, lowerText);
 				
+				// update memePanel
 				memePanel.setImage(img);
+				memePanel.allowSave = true;
+				memePanel.isSaved = false;
 				memePanel.repaint();
 				
 				picButton.setEnabled(true);
@@ -155,19 +160,21 @@ class ImagePanel extends JPanel{
 	
 	public BufferedImage imgg=null;
 	
+	public boolean allowSave = false;
+	public boolean isSaved = false;
+	
 	public ImagePanel(BufferedImage img) {
 		super();
 		this.img = img;
 		this.setBackground(Color.black);
-		
-
-		
+				
 		//SCREENSHOTING
 		addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
                 System.out.println("CLICK");
-                if (imgg!=null){
+                System.out.println(allowSave + " " + isSaved);
+                if (imgg!=null && allowSave && !isSaved){ // prevent from saving null, default image and repeating saving
 	                File outputfile = new File("uploads/");
 					// if the directory does not exist, create it
 					try {
@@ -176,10 +183,15 @@ class ImagePanel extends JPanel{
 						}
 	 
 				        // retrieve image
-		                Random rnd = new Random();
-				    	outputfile = new File("uploads/"+rnd.nextInt()+"meme.png");
-				        ImageIO.write(imgg, "png", outputfile);
-				        System.out.println("SAVED!");
+						String filename = new Date().getTime() + "meme.png";
+				    	outputfile = new File("uploads/"+filename);
+				    	if (!outputfile.exists()) {
+				    		ImageIO.write(imgg, "png", outputfile);
+					        isSaved = true;
+					        System.out.println("SAVED!");
+				    	} else {
+				    		JOptionPane.showMessageDialog(null, "Couldn't save the meme! You can try again?");
+				    	}
 					} catch (IOException e1) {
 						System.err.println("Couldn't save the meme! "+e1.getMessage());
 					}
