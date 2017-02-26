@@ -11,7 +11,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 
 import javax.imageio.ImageIO;
 
@@ -109,7 +108,7 @@ public class ImageTools {
 	    g.setFont(font);
 	    
 	    // draw offsets
-	    int offset = 4;
+	    int offset = 2;
 		g.setColor(Color.BLACK);
 		g.drawString(text, x - offset, y - offset);
 		g.drawString(text, x - offset, y + offset);
@@ -155,36 +154,37 @@ public class ImageTools {
 			
 			currentFont = new Font("Impact", Font.PLAIN, fontSize);
 			fontMatric = g.getFontMetrics(currentFont);
-
+			/*
 			for (String a : topLines){
 				System.out.println("--> "+a);
-			}
+			}*/
 			// draw
 			g.setFont(currentFont);
+			
+			//DRAW TOP PART OF CAPTION
 			for (int i=0;i<topLines.size()/2;++i){
 				Rectangle rect = new Rectangle();
 				rect.width = width;
 				rect.height = (int)(fontMatric.getHeight()*1.1f);
 				rect.setLocation(margin, rect.height*(i)+margin/4);
 				drawCenteredString(g, topLines.get(i), rect, currentFont);
-				System.out.println(topLines.get(i));
+				//System.out.println(topLines.get(i));
 			}
 			
+			//DRAW LOWER PART OF CAPTION
 			int nr = ((topLines.size()%2==0)?topLines.size()/2:topLines.size()/2+1);
-			System.out.println("! = "+nr);
+			//System.out.println("! = "+nr);
 			for (int i=0;i<nr;++i){
 				Rectangle rect = new Rectangle();
 				rect.width = width;
 				rect.height = (int)(fontMatric.getHeight()*1.1f);
 				rect.setLocation(margin, height - margin/4 - rect.height*nr+rect.height*i);
-				System.out.println("Y = "+rect.getLocation().getY());
+				//System.out.println("Y = "+rect.getLocation().getY());
 				drawCenteredString(g, topLines.get(i+topLines.size()/2), rect, currentFont);
-				System.out.println("BOTOM "+topLines.get(i+topLines.size()/2));
+				//System.out.println("BOTOM "+topLines.get(i+topLines.size()/2));
 			}
 			
 		}
-
-
 		return img;
 	}
 	

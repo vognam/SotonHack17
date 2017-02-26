@@ -9,7 +9,14 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.Random;
+
+import javax.imageio.ImageIO;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -129,7 +136,7 @@ class MemeFrame extends JFrame {
 	
 }
 
-class ImagePanel extends JPanel {
+class ImagePanel extends JPanel{
 	
 	/**
 	 * 
@@ -137,10 +144,39 @@ class ImagePanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 	private BufferedImage img;
 	
+	public BufferedImage imgg=null;
+	
 	public ImagePanel(BufferedImage img) {
 		super();
 		this.img = img;
 		this.setBackground(Color.black);
+		
+
+		
+		//SCREENSHOTING
+		addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                System.out.println("CLICK");
+                if (imgg!=null){
+	                File outputfile = new File("uploads/");
+					// if the directory does not exist, create it
+					try {
+						if (!outputfile.exists()) {
+						    outputfile.mkdir();
+						}
+	 
+				        // retrieve image
+		                Random rnd = new Random();
+				    	outputfile = new File("uploads/"+rnd.nextInt()+"meme.png");
+				        ImageIO.write(imgg, "png", outputfile);
+				        System.out.println("SAVED!");
+					} catch (IOException e1) {
+						System.err.println("Couldn't save the meme! "+e1.getMessage());
+					}
+	            }
+            }
+        });
 	}
 	
 	@Override
@@ -178,6 +214,7 @@ class ImagePanel extends JPanel {
 	
 	public void setImage(BufferedImage img) {
 		this.img = img;
+		imgg = img;
 	}
 	
 }
