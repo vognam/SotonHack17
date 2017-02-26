@@ -72,7 +72,7 @@ class MemeFrame extends JFrame {
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		init();
-		initMenuBar();
+		//initMenuBar();
 		
 		this.setSize(windowWidth, windowHeight);
 		
@@ -107,7 +107,7 @@ class MemeFrame extends JFrame {
 			e.printStackTrace();
 		}
 		
-		ImagePanel memePanel = new ImagePanel(null);
+		ImagePanel memePanel = new ImagePanel(img);
 		
 		//displayPanel.add(camPanel);
 		//displayPanel.add(memePanel);
