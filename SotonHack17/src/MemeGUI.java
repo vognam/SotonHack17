@@ -21,7 +21,10 @@ import javax.imageio.ImageIO;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
@@ -62,11 +65,14 @@ class MemeFrame extends JFrame {
 	private int windowWidth = 1750;
 	private int windowHeight = 1000;
 	
+	boolean isExperimental = true;
+	
 	public MemeFrame() {
 		
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		init();
+		initMenuBar();
 		
 		this.setSize(windowWidth, windowHeight);
 		
@@ -101,7 +107,7 @@ class MemeFrame extends JFrame {
 			e.printStackTrace();
 		}
 		
-		ImagePanel memePanel = new ImagePanel(img);
+		ImagePanel memePanel = new ImagePanel(null);
 		
 		//displayPanel.add(camPanel);
 		//displayPanel.add(memePanel);
@@ -146,6 +152,33 @@ class MemeFrame extends JFrame {
 		
 		container.add(picButton, BorderLayout.SOUTH);
 		container.add(displayPanel, BorderLayout.CENTER);
+	}
+	
+	private void initMenuBar() {
+		try {
+			System.setProperty("apple.laf.useScreenMenuBar", "true");
+		} catch (Exception e) {
+			
+		}
+		JMenuBar menuBar = new JMenuBar();
+		
+		JMenu optionsMenu = new JMenu("Options");
+		
+		JCheckBoxMenuItem experimentalMenuItem = new JCheckBoxMenuItem("Experimental");
+		experimentalMenuItem.setSelected(isExperimental);
+		experimentalMenuItem.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				isExperimental = experimentalMenuItem.isSelected();
+			}
+		});
+		
+		optionsMenu.add(experimentalMenuItem);
+		
+		menuBar.add(optionsMenu);
+		
+		this.setJMenuBar(menuBar);
 	}
 	
 }
