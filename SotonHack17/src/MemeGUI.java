@@ -90,7 +90,16 @@ class MemeFrame extends JFrame {
 		
 		camPanel = new TakePicture(webcam);
 		
-		ImagePanel memePanel = new ImagePanel(null);
+		// read default meme
+		img = null;
+		try {
+			img = ImageIO.read(new File("exceptionMeme.jpg"));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		ImagePanel memePanel = new ImagePanel(img);
 		
 		//displayPanel.add(camPanel);
 		//displayPanel.add(memePanel);
