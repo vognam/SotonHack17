@@ -109,7 +109,7 @@ public class ImageTools {
 	    g.setFont(font);
 	    
 	    // draw offsets
-	    int offset = 4;
+	    int offset = 2;
 		g.setColor(Color.BLACK);
 		g.drawString(text, x - offset, y - offset);
 		g.drawString(text, x - offset, y + offset);
