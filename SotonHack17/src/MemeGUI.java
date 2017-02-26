@@ -9,11 +9,23 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.Date;
+import java.util.Random;
+
+import javax.imageio.ImageIO;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 
@@ -53,11 +65,14 @@ class MemeFrame extends JFrame {
 	private int windowWidth = 1750;
 	private int windowHeight = 1000;
 	
+	boolean isExperimental = true;
+	
 	public MemeFrame() {
 		
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		init();
+		initMenuBar();
 		
 		this.setSize(windowWidth, windowHeight);
 		
@@ -82,6 +97,15 @@ class MemeFrame extends JFrame {
 		webcam.setViewSize(WebcamResolution.VGA.getSize());
 		
 		camPanel = new TakePicture(webcam);
+		
+		// read default meme
+		img = null;
+		try {
+			img = ImageIO.read(new File("exceptionMeme.jpg"));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		ImagePanel memePanel = new ImagePanel(null);
 		
@@ -115,7 +139,10 @@ class MemeFrame extends JFrame {
 				lowerText = memeMain.getLowerText();
 				img = ImageTools.drawCaption(img, upperText, lowerText);
 				
+				// update memePanel
 				memePanel.setImage(img);
+				memePanel.allowSave = true;
+				memePanel.isSaved = false;
 				memePanel.repaint();
 				
 				picButton.setEnabled(true);
@@ -127,9 +154,36 @@ class MemeFrame extends JFrame {
 		container.add(displayPanel, BorderLayout.CENTER);
 	}
 	
+	private void initMenuBar() {
+		try {
+			System.setProperty("apple.laf.useScreenMenuBar", "true");
+		} catch (Exception e) {
+			
+		}
+		JMenuBar menuBar = new JMenuBar();
+		
+		JMenu optionsMenu = new JMenu("Options");
+		
+		JCheckBoxMenuItem experimentalMenuItem = new JCheckBoxMenuItem("Experimental");
+		experimentalMenuItem.setSelected(isExperimental);
+		experimentalMenuItem.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				isExperimental = experimentalMenuItem.isSelected();
+			}
+		});
+		
+		optionsMenu.add(experimentalMenuItem);
+		
+		menuBar.add(optionsMenu);
+		
+		this.setJMenuBar(menuBar);
+	}
+	
 }
 
-class ImagePanel extends JPanel {
+class ImagePanel extends JPanel{
 	
 	/**
 	 * 
@@ -137,10 +191,46 @@ class ImagePanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 	private BufferedImage img;
 	
+	public BufferedImage imgg=null;
+	
+	public boolean allowSave = false;
+	public boolean isSaved = false;
+	
 	public ImagePanel(BufferedImage img) {
 		super();
 		this.img = img;
 		this.setBackground(Color.black);
+				
+		//SCREENSHOTING
+		addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                System.out.println("CLICK");
+                System.out.println(allowSave + " " + isSaved);
+                if (imgg!=null && allowSave && !isSaved){ // prevent from saving null, default image and repeating saving
+	                File outputfile = new File("uploads/");
+					// if the directory does not exist, create it
+					try {
+						if (!outputfile.exists()) {
+						    outputfile.mkdir();
+						}
+	 
+				        // retrieve image
+						String filename = new Date().getTime() + "meme.png";
+				    	outputfile = new File("uploads/"+filename);
+				    	if (!outputfile.exists()) {
+				    		ImageIO.write(imgg, "png", outputfile);
+					        isSaved = true;
+					        System.out.println("SAVED!");
+				    	} else {
+				    		JOptionPane.showMessageDialog(null, "Couldn't save the meme! You can try again?");
+				    	}
+					} catch (IOException e1) {
+						System.err.println("Couldn't save the meme! "+e1.getMessage());
+					}
+	            }
+            }
+        });
 	}
 	
 	@Override
@@ -178,6 +268,7 @@ class ImagePanel extends JPanel {
 	
 	public void setImage(BufferedImage img) {
 		this.img = img;
+		imgg = img;
 	}
 	
 }
